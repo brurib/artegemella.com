@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Artegemella - Home</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/index.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 </head>
 <body style="margin: 0px; padding: 0px; overflow: hidden ">
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <nav class="navbar navbar-inverse navbar-custom navbar-fixed-top">
         <div class="container-fluid" >
             <div class="navbar-header" id = "navbar_container">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar_main">
@@ -34,6 +35,9 @@
     <div class="container-fluid" style="padding: 0px 0px 0px 0px; margin: 0px;" id="content_container">
     </div>
     <script>
+        $('.nav a').on('click', function(){
+            $('.navbar-toggle').click() //bootstrap 3.x by Richard
+        });
         var navbar = document.getElementById('navbar_container');
         var contentContainer = document.getElementById('content_container');
         var resize = function (){

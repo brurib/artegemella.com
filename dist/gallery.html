@@ -4,40 +4,41 @@
     <meta charset="UTF-8">
     <title>Artegemella - Gallery</title>
     <link rel="stylesheet" href="css/blueimp-gallery.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/gallery.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="http://underscorejs.org/underscore-min.js"></script>
     <script src="js/paintings.js"></script>
 </head>
-<body>
-    <div id="blueimp-gallery" class="blueimp-gallery">
-        <div class="slides"></div>
-        <h3 class="title"></h3>
-        <a class="prev">‹</a>
-        <a class="next">›</a>
-        <a class="close">×</a>
-        <a class="play-pause"></a>
-        <ol class="indicator"></ol>
+<body style="background-color: whitesmoke">
+    <div id="mySidenav" class="sidenav">
+    </div>
+    <div id="main" style="margin: 0px; padding: 0px">
+        <div id="blueimp-gallery" class="blueimp-gallery">
+            <div class="slides"></div>
+            <h3 class="title"></h3>
+            <a class="prev">‹</a>
+            <a class="next">›</a>
+            <a class="close">×</a>
+            <a class="play-pause"></a>
+            <ol class="indicator"></ol>
+        </div>
+        <div class="next">
+            <a id="toggle-drawer" style="position: fixed;top: 0; padding-left: 5px; padding-right: 5px;" class="next" onclick="openCloseNav();">&#8250;</a>
+        </div>
+        <div id="links" style="margin:20px">
+        </div>
     </div>
 
-    <div id="links">
-        <script>
-            var links = document.getElementById('links');
-            var quadriKeys = _.keys(quadri);
-            for(var i = 0; i < quadriKeys.length; i++){
-                var link = document.createElement('a');
-                link.href = driveUrl(quadri[quadriKeys[i]].id);
-                link.title = quadri[quadriKeys[i]].title;
-                var thumb = document.createElement('img');
-                thumb.src = quadri[quadriKeys[i]].thumb;
-                link.appendChild(thumb);
-                links.appendChild(link);
-            }
-        </script>
-    </div>
+
 
     <script src="js/blueimp-gallery.min.js"></script>
     <script>
+        var toggleDrawer = document.getElementById("toggle-drawer");
+        var drawerIsOpened = false;
+        var links = document.getElementById('links');
+        var sideNav = document.getElementById('mySidenav');
         document.getElementById('links').onclick = function (event) {
             event = event || window.event;
             if(event.target == document.getElementById('links')){
@@ -49,6 +50,69 @@
                 links = this.getElementsByTagName('a');
             blueimp.Gallery(links, options);
         };
+        getTags();
+        refreshGallery([]);
+        function getTags () {
+            var tags = [];
+            var paintings = searchPainting();
+            for(var pIdx in paintings){
+                if(paintings[pIdx]){
+                    for(var tIdx in paintings[pIdx].tags){
+                        if(tags.indexOf(paintings[pIdx].tags[tIdx]) === -1){
+                            console.log(paintings[pIdx].tags[tIdx]);
+                            tags.push(paintings[pIdx].tags[tIdx]);
+                        }
+                    }
+                }
+            }
+            console.log(tags);
+            sideNav.innerHTML = '';
+            for(var tagIdx in tags){
+                var link = document.createElement('a');
+                link.innerHTML = tags[tagIdx];
+                link.title = tags[tagIdx];
+                link.href = 'javascript: filter("' + tags[tagIdx] + '");';
+                sideNav.appendChild(link);
+            }
+        }
+        function refreshGallery(tags) {
+            var paintings = searchPainting(null,null,tags);
+            var quadriKeys = _.keys(paintings);
+            links.innerHTML = '';
+            for(var i = 0; i < quadriKeys.length; i++){
+                var link = document.createElement('a');
+                link.href = driveUrl(paintings[quadriKeys[i]].id);
+                link.title = paintings[quadriKeys[i]].title;
+                var thumb = document.createElement('img');
+                thumb.src = paintings[quadriKeys[i]].thumb;
+                link.appendChild(thumb);
+                links.appendChild(link);
+            }
+        }
+        /* Set the width of the side navigation to 250px */
+        function openNav() {
+            toggleDrawer.innerHTML = "&#8249;";
+            document.getElementById("mySidenav").style.width = "150px";
+            document.getElementById("main").style.marginLeft = "150px";
+            drawerIsOpened = true;
+        }
+
+        /* Set the width of the side navigation to 0 */
+        function closeNav() {
+            toggleDrawer.innerHTML = "&#8250;";
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("main").style.marginLeft = "0";
+            drawerIsOpened = false;
+        }
+        function openCloseNav(){
+            if(!drawerIsOpened) openNav();
+            else closeNav();
+        }
+
+        function filter(filter){
+            refreshGallery([filter]);
+        }
+
     </script>
 
 </body>
